@@ -1,0 +1,157 @@
+Program code:
+declare
+eid int;
+en varchar(20);
+sal float;
+did int;
+cursor c1 is select * from employee1;
+begin
+open c1;
+loop
+fetch c1 into eid,en,sal,did ;
+exit when c1%notfound;
+dbms_output.put_line(eid||' '||en||' '||sal||' '||did);
+end loop;
+close c1;
+end;
+/
+declare
+eid int;
+en varchar(20);
+sal float;
+deptid int;
+cursor c1(deptid int) is select * from employee1 where deptid=deptid;
+begin
+open c1(&deptid);
+loop
+fetch c1 into eid,en,sal,deptid ;
+exit when c1%notfound;
+dbms_output.put_line(eid||' '||en||' '||sal||' '||deptid);
+end loop;
+close c1;
+end;
+/
+Output:
+
+SQL*Plus: Release 21.0.0.0.0 - Production on Fri Aug 23 10:04:17 2024
+Version 21.3.0.0.0
+
+Copyright (c) 1982, 2021, Oracle.  All rights reserved.
+
+Enter user-name: system
+Enter password:
+Last Successful login time: Wed Aug 21 2024 09:59:58 +05:30
+
+Connected to:
+Oracle Database 21c Express Edition Release 21.0.0.0.0 - Production
+Version 21.3.0.0.0
+
+SQL> create table employee(eid int,ename varchar(20),sal float,deptid int);
+create table employee(eid int,ename varchar(20),sal float,deptid int)
+             *
+ERROR at line 1:
+ORA-00955: name is already used by an existing object
+
+
+SQL> create table employee1(eid int,ename varchar(20),sal float,deptid int);
+
+Table created.
+
+SQL> insert into employee1 values(1,'aditya',10000,111);
+
+1 row created.
+
+SQL> insert into employee1 values(2,'hareram',20000',222);
+ERROR:
+ORA-01756: quoted string not properly terminated
+
+
+SQL> insert into employee1 values(2,'hareram',20000,222);
+
+1 row created.
+
+SQL> insert into employee1 values(3,'om'.30000,333);
+insert into employee1 values(3,'om'.30000,333)
+                                   *
+ERROR at line 1:
+ORA-00917: missing comma
+
+
+SQL> insert into employee1 values(3,'om',30000,333);
+
+1 row created.
+
+SQL> insert into employee1 values(4,'akash',40000,444);
+
+1 row created.
+
+SQL> set serveroutput on
+SQL> @cursor.sql;
+1 aditya 10000 111
+2 hareram 20000 222
+3 om 30000 333
+4 akash 40000 444
+
+PL/SQL procedure successfully completed.
+
+SQL> @cursorpar.sql;
+Enter value for deptid: 222
+old   8: open c1(&deptid);
+new   8: open c1(222);
+cursor c1(deptid) is select * from employee1 where deptid=deptid;
+                *
+ERROR at line 6:
+ORA-06550: line 6, column 17:
+PLS-00103: Encountered the symbol ")" when expecting one of the following:
+in out <an identifier> <a double-quoted delimited-identifier>
+table ... columns long double ref char standard time
+timestamp interval date binary national character nchar
+The symbol "<an identifier>" was substituted for ")" to continue.
+
+
+SQL> @cursorpar.sql;
+Enter value for deptid: 222
+old   8: open c1(&deptid);
+new   8: open c1(222);
+fetch c1 into eid,en,sal,did ;
+                         *
+ERROR at line 10:
+ORA-06550: line 10, column 26:
+PLS-00201: identifier 'DID' must be declared
+ORA-06550: line 10, column 1:
+PL/SQL: SQL Statement ignored
+ORA-06550: line 12, column 51:
+PLS-00201: identifier 'DID' must be declared
+ORA-06550: line 12, column 1:
+PL/SQL: Statement ignored
+
+
+SQL> @cursorpar.sql;
+Enter value for deptid: 111
+old   8: open c1(&deptid);
+new   8: open c1(111);
+fetch c1 into eid,en,sal,did ;
+                         *
+ERROR at line 10:
+ORA-06550: line 10, column 26:
+PLS-00201: identifier 'DID' must be declared
+ORA-06550: line 10, column 1:
+PL/SQL: SQL Statement ignored
+ORA-06550: line 12, column 51:
+PLS-00201: identifier 'DID' must be declared
+ORA-06550: line 12, column 1:
+PL/SQL: Statement ignored
+
+
+SQL> @cursorpar.sql;
+Enter value for deptid: 111
+old   8: open c1(&deptid);
+new   8: open c1(111);
+1 aditya 10000 111
+2 hareram 20000 222
+3 om 30000 333
+4 akash 40000 444
+
+PL/SQL procedure successfully completed.
+
+

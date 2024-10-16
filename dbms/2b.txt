@@ -1,0 +1,216 @@
+Microsoft Windows [Version 10.0.19045.4651]
+(c) Microsoft Corporation. All rights reserved.
+
+C:\Program Files\MySQL\MySQL Server 8.1\bin>mysql -h localjost -u root -p
+Enter password: ****
+ERROR 2005 (HY000): Unknown MySQL server host 'localjost' (11001)
+
+C:\Program Files\MySQL\MySQL Server 8.1\bin>mysql -h localhost -u root -p
+Enter password: ****
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 8
+Server version: 8.1.0 MySQL Community Server - GPL
+
+Copyright (c) 2000, 2023, Oracle and/or its affiliates.
+
+Oracle is a registered trademark of Oracle Corporation and/or its
+affiliates. Other names may be trademarks of their respective
+owners.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+mysql> create database practical3;
+Query OK, 1 row affected (0.01 sec)
+
+mysql> use practical3;
+Database changed
+mysql> create table customer;
+ERROR 4028 (HY000): A table must have at least one visible column.
+mysql> create table customer(cid int,cname varchar(20),address varchar(20));
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> insert into customer values(101,'sujit','pune');
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into customer values(102,'sunil','talegaon');
+Query OK, 1 row affected (0.00 sec)
+
+mysql> insert into customer values(103,'suyash','talegaon');
+Query OK, 1 row affected (0.00 sec)
+
+mysql> insert into customer values(104,'ram','pune');
+Query OK, 1 row affected (0.00 sec)
+
+mysql> insert into customer values(105,'aditya','pune');
+Query OK, 1 row affected (0.00 sec)
+
+mysql> select *from customer;
++------+--------+----------+
+| cid  | cname  | address  |
++------+--------+----------+
+|  101 | sujit  | pune     |
+|  102 | sunil  | talegaon |
+|  103 | suyash | talegaon |
+|  104 | ram    | pune     |
+|  105 | aditya | pune     |
++------+--------+----------+
+5 rows in set (0.00 sec)
+
+mysql> delete from customer where city='pune';
+ERROR 1054 (42S22): Unknown column 'city' in 'where clause'
+mysql> delete from customer where address='pune';
+Query OK, 3 rows affected (0.00 sec)
+
+mysql> select *from customer;
++------+--------+----------+
+| cid  | cname  | address  |
++------+--------+----------+
+|  102 | sunil  | talegaon |
+|  103 | suyash | talegaon |
++------+--------+----------+
+2 rows in set (0.00 sec)
+
+mysql> insert into customer values(101,'sujit','ahmednagar');
+Query OK, 1 row affected (0.00 sec)
+
+mysql> select * from customer where cid>90;
++------+--------+------------+
+| cid  | cname  | address    |
++------+--------+------------+
+|  102 | sunil  | talegaon   |
+|  103 | suyash | talegaon   |
+|  101 | sujit  | ahmednagar |
++------+--------+------------+
+3 rows in set (0.00 sec)
+
+mysql> update customer set cname='mohit' where cname='sujit';
+Query OK, 1 row affected (0.03 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> select * from customer;
++------+--------+------------+
+| cid  | cname  | address    |
++------+--------+------------+
+|  102 | sunil  | talegaon   |
+|  103 | suyash | talegaon   |
+|  101 | mohit  | ahmednagar |
++------+--------+------------+
+3 rows in set (0.00 sec)
+
+mysql> create table pilot(pid int,pname varchar(15));
+Query OK, 0 rows affected (0.04 sec)
+
+mysql> create table flight(fid int,ftype varchar(20),capacity int);
+Query OK, 0 rows affected (0.04 sec)
+
+mysql> insert into pilot values(1,'kartik');
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into pilot values(2,'sam');
+Query OK, 1 row affected (0.00 sec)
+
+mysql> insert into pilot values(3,'amit');
+Query OK, 1 row affected (0.00 sec)
+
+mysql> insert into pilot values(4,'aditya');
+Query OK, 1 row affected (0.00 sec)
+
+mysql> insert into pilot values(5,'atharv');
+Query OK, 1 row affected (0.00 sec)
+
+mysql> insert into flight values(11,'economy',500);
+Query OK, 1 row affected (0.00 sec)
+
+mysql> insert into flight values(155,'firstclass',600);
+Query OK, 1 row affected (0.00 sec)
+
+mysql> select * from flight where capacity>300;
++------+------------+----------+
+| fid  | ftype      | capacity |
++------+------------+----------+
+|   11 | economy    |      500 |
+|  155 | firstclass |      600 |
++------+------------+----------+
+2 rows in set (0.00 sec)
+
+mysql> select * from pilot where pname like 'a%';
++------+--------+
+| pid  | pname  |
++------+--------+
+|    3 | amit   |
+|    4 | aditya |
+|    5 | atharv |
++------+--------+
+3 rows in set (0.00 sec)
+
+mysql>
+mysql>
+mysql>
+mysql> create table student(sid int,fname varchar(15),lname varchar(15),email varchar(100),edate date);
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> alter table student add primary key(sid);
+Query OK, 0 rows affected (0.11 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> create table courses(cid int primary key,canme varchar(20),credits int);
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> create table enrollment(eid int primary key,stid int REFRENCES student(sid),csid int REFRENCES courses(cid));
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'REFRENCES student(sid),csid int REFRENCES courses(cid))' at line 1
+mysql> create table enrollment(eid int primary key,stid int REFERENCES student(sid),csid int REFERENCES courses(cid));
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> insert into student values(1001,'alice','smith','alice.smith@gamail.com','2024-06-19');
+Query OK, 1 row affected (0.02 sec)
+
+mysql> update student set email='alice.smith@alumni.gamil.com' where email='alice.smith@gamail.com';
+Query OK, 1 row affected (0.01 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> insert into courses(2001,'cs',44);
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '2001,'cs',44)' at line 1
+mysql> insert into courses values(2001,'cs',44);
+Query OK, 1 row affected (0.03 sec)
+
+mysql> insert into enrollment(100,1001,2001);
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '100,1001,2001)' at line 1
+mysql> insert into enrollment values(100,1001,2001);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> delete from enrollment where stid=1001 and csid=2001;
+Query OK, 1 row affected (0.01 sec)
+
+mysql> select * from enrollment;
+Empty set (0.00 sec)
+
+mysql> select * from courses;
++------+-------+---------+
+| cid  | canme | credits |
++------+-------+---------+
+| 2001 | cs    |      44 |
++------+-------+---------+
+1 row in set (0.00 sec)
+
+mysql> select * from student;
++------+-------+-------+------------------------------+------------+
+| sid  | fname | lname | email                        | edate      |
++------+-------+-------+------------------------------+------------+
+| 1001 | alice | smith | alice.smith@alumni.gamil.com | 2024-06-19 |
++------+-------+-------+------------------------------+------------+
+1 row in set (0.00 sec)
+
+mysql> show tables;
++----------------------+
+| Tables_in_practical3 |
++----------------------+
+| courses              |
+| customer             |
+| enrollment           |
+| flight               |
+| pilot                |
+| student              |
++----------------------+
+6 rows in set (0.02 sec)
+
+mysql>

@@ -1,0 +1,106 @@
+Program Code:
+create or replace trigger t1 
+before update or delete on library1
+for each row
+declare
+lid int;
+btype varchar(20);
+bcount int;
+icount int;
+begin
+lid:=:old.lid ;
+btype:=:old.booktype;
+bcount:=:old.bookcount;
+icount:=:old.issuebookcount;
+insert into lab_back values(lid,btype,bcount,icount);
+end;
+/
+Output:
+
+SQL*Plus: Release 21.0.0.0.0 - Production on Wed Aug 28 10:14:31 2024
+Version 21.3.0.0.0
+
+Copyright (c) 1982, 2021, Oracle.  All rights reserved.
+
+Enter user-name: system
+Enter password:
+Last Successful login time: Sat Aug 24 2024 12:14:23 +05:30
+
+Connected to:
+Oracle Database 21c Express Edition Release 21.0.0.0.0 - Production
+Version 21.3.0.0.0
+
+SQL> create table library1(lid int,booktype varchar(20),bookcount int,issuebookcount int);
+
+Table created.
+
+
+SQL> insert into library1 values(1,'historic',50,10);
+
+1 row created.
+
+SQL> insert into library1 values(2,'story',56,20);
+
+1 row created.
+
+SQL> insert into library1 values(3,'novel',74,9);
+
+1 row created.
+
+SQL> create table lab_back(lid int,booktype varchar(20),bookcount int,issuebookcount int);
+
+Table created.
+
+SQL> update library1 set lid=10 where lid=1;
+
+1 row updated.
+
+SQL> @trigger.sql;
+
+Trigger created.
+
+SQL> select * from lab_back;
+
+no rows selected
+
+SQL> update library1 set lid=10 where lid=1;
+
+0 rows updated.
+
+SQL> update library1 set lid=10 where lid=2;
+
+1 row updated.
+
+SQL> select * from lab_back;
+
+       LID BOOKTYPE              BOOKCOUNT ISSUEBOOKCOUNT
+---------- -------------------- ---------- --------------
+         2 story                        56             20
+
+SQL> select * from library1;
+
+       LID BOOKTYPE              BOOKCOUNT ISSUEBOOKCOUNT
+---------- -------------------- ---------- --------------
+        10 historic                     50             10
+        10 story                        56             20
+         3 novel                        74              9
+SQL> update library1 set lid=1000 where lid=3;
+
+1 row updated.
+
+SQL> select * from lab_back;
+
+       LID BOOKTYPE              BOOKCOUNT ISSUEBOOKCOUNT
+---------- -------------------- ---------- --------------
+         2 story                        56             20
+         3 novel                        74              9
+
+SQL> select * from library1;
+
+       LID BOOKTYPE              BOOKCOUNT ISSUEBOOKCOUNT
+---------- -------------------- ---------- --------------
+        10 historic                     50             10
+        10 story                        56             20
+      1000 novel                        74              9
+
+

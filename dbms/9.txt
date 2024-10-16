@@ -1,0 +1,211 @@
+use hareram;
+switched to db hareram
+db.createCollection('try');
+{ ok: 1 }
+show collections;
+try
+db.try.insert({rollno:101,name:'hareram'});'
+Error: clone(t={}){const r=t.loc||{};return e({loc:new Position("line"in r?r.line:this.loc.line,"column"in r?r.column:...<omitted>...)} could not be cloned.
+db.try.insert({rollno:101,name:'hareram'});
+DeprecationWarning: Collection.insert() is deprecated. Use insertOne, insertMany, or bulkWrite.
+{
+  acknowledged: true,
+  insertedIds: {
+    '0': ObjectId("66ff75e5c70d8a00f39d7815")
+  }
+}
+db.stud.find();
+db.try.find();
+{
+  _id: ObjectId("66ff75e5c70d8a00f39d7815"),
+  rollno: 101,
+  name: 'hareram'
+}
+db.try.find({rollno:101});
+{
+  _id: ObjectId("66ff75e5c70d8a00f39d7815"),
+  rollno: 101,
+  name: 'hareram'
+}
+db.try.insert({rollno:103,name:'ram'});
+{
+  acknowledged: true,
+  insertedIds: {
+    '0': ObjectId("66ff76eac70d8a00f39d7816")
+  }
+}
+db.try.insert({rollno:104,name:'hari'});
+{
+  acknowledged: true,
+  insertedIds: {
+    '0': ObjectId("66ff771dc70d8a00f39d7817")
+  }
+}
+db.try.find();
+{
+  _id: ObjectId("66ff75e5c70d8a00f39d7815"),
+  rollno: 101,
+  name: 'hareram'
+}
+{
+  _id: ObjectId("66ff76eac70d8a00f39d7816"),
+  rollno: 103,
+  name: 'ram'
+}
+{
+  _id: ObjectId("66ff771dc70d8a00f39d7817"),
+  rollno: 104,
+  name: 'hari'
+}
+db.try.find(skip(2));
+ReferenceError: skip is not defined
+db.try.find().skip(2);
+{
+  _id: ObjectId("66ff771dc70d8a00f39d7817"),
+  rollno: 104,
+  name: 'hari'
+}
+db.try.find().limit(1);
+{
+  _id: ObjectId("66ff75e5c70d8a00f39d7815"),
+  rollno: 101,
+  name: 'hareram'
+}
+db.try.find().sort(name);
+ReferenceError: name is not defined
+db.try.find().sortby(name);
+ReferenceError: name is not defined
+db.try.find().sortby({name});
+ReferenceError: name is not defined
+db.try.find().sortby({name:'j'});
+TypeError: db.try.find().sortby is not a function
+ 
+db.try.find().sort({name:'j'});
+MongoInvalidArgumentError: Invalid sort direction: "j"
+db.try.find().sort({name});
+ReferenceError: name is not defined
+db.try.find().sort({name;'a'});
+Error: clone(t={}){const r=t.loc||{};return e({loc:new Position("line"in r?r.line:this.loc.line,"column"in r?r.column:...<omitted>...)} could not be cloned.
+db.try.find().sort({rollno:1});
+{
+  _id: ObjectId("66ff75e5c70d8a00f39d7815"),
+  rollno: 101,
+  name: 'hareram'
+}
+{
+  _id: ObjectId("66ff76eac70d8a00f39d7816"),
+  rollno: 103,
+  name: 'ram'
+}
+{
+  _id: ObjectId("66ff771dc70d8a00f39d7817"),
+  rollno: 104,
+  name: 'hari'
+}
+db.try.find().sort({name:'a'});
+MongoInvalidArgumentError: Invalid sort direction: "a"
+db.try.find().sort({name:"a"});
+MongoInvalidArgumentError: Invalid sort direction: "a"
+db.try.find().sort({name:1});
+{
+  _id: ObjectId("66ff75e5c70d8a00f39d7815"),
+  rollno: 101,
+  name: 'hareram'
+}
+{
+  _id: ObjectId("66ff771dc70d8a00f39d7817"),
+  rollno: 104,
+  name: 'hari'
+}
+{
+  _id: ObjectId("66ff76eac70d8a00f39d7816"),
+  rollno: 103,
+  name: 'ram'
+}
+db.try.update({rollno:101},{$set:{name:'akash'}});
+DeprecationWarning: Collection.update() is deprecated. Use updateOne, updateMany, or bulkWrite.
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 1,
+  modifiedCount: 1,
+  upsertedCount: 0
+}
+db.try.find();
+{
+  _id: ObjectId("66ff75e5c70d8a00f39d7815"),
+  rollno: 101,
+  name: 'akash'
+}
+{
+  _id: ObjectId("66ff76eac70d8a00f39d7816"),
+  rollno: 103,
+  name: 'ram'
+}
+{
+  _id: ObjectId("66ff771dc70d8a00f39d7817"),
+  rollno: 104,
+  name: 'hari'
+}
+db.try.update({rollno:101},{address:'talegaon'});
+MongoInvalidArgumentError: Update document requires atomic operators
+db.try.update({rollno:101},{address:['talegaon']});
+MongoInvalidArgumentError: Update document requires atomic operators
+db.try.update({rollno:101},{$set:{address:'talegaon'}});
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 1,
+  modifiedCount: 1,
+  upsertedCount: 0
+}
+db.try.find();
+{
+  _id: ObjectId("66ff75e5c70d8a00f39d7815"),
+  rollno: 101,
+  name: 'akash',
+  address: 'talegaon'
+}
+{
+  _id: ObjectId("66ff76eac70d8a00f39d7816"),
+  rollno: 103,
+  name: 'ram'
+}
+{
+  _id: ObjectId("66ff771dc70d8a00f39d7817"),
+  rollno: 104,
+  name: 'hari'
+}
+db.try.deleteOne({rolno:101});
+{
+  acknowledged: true,
+  deletedCount: 0
+}
+db.try.find();
+{
+  _id: ObjectId("66ff75e5c70d8a00f39d7815"),
+  rollno: 101,
+  name: 'akash',
+  address: 'talegaon'
+}
+{
+  _id: ObjectId("66ff76eac70d8a00f39d7816"),
+  rollno: 103,
+  name: 'ram'
+}
+{
+  _id: ObjectId("66ff771dc70d8a00f39d7817"),
+  rollno: 104,
+  name: 'hari'
+}
+db.try.deleteOne({rollno:101});
+{
+  acknowledged: true,
+  deletedCount: 1
+}
+db.try.find();
+{
+  _id: ObjectId("66ff76eac70d8a00f39d7816"),
+  rollno: 103,
+  name: 'ram'
+}
