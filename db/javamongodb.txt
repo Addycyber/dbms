@@ -1,0 +1,126 @@
+make new file pom.xml
+<dependency>
+    <groupId>org.mongodb</groupId>
+    <artifactId>mongo-java-driver</artifactId>
+    <version>3.12.10</version> <!-- You can check for the latest version -->
+</dependency>
+
+
+import com.mongodb.MongoClient;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.Filters;
+import org.bson.Document;
+import org.bson.conversions.Bson;
+
+import java.util.Scanner;
+
+public class StudentManager {
+
+    private static MongoCollection<Document> studentCollection;
+
+    public static void main(String[] args) {
+        // Connect to MongoDB server and get the database
+        MongoClient mongoClient = new MongoClient("localhost", 27017);
+        MongoDatabase database = mongoClient.getDatabase("your_database_name");
+        studentCollection = database.getCollection("Student");
+
+        Scanner scanner = new Scanner(System.in);
+        int choice;
+
+        while (true) {
+            System.out.println("\n--- Student Management ---");
+            System.out.println("1. Insert Student");
+            System.out.println("2. Update Student");
+            System.out.println("3. Delete Student");
+            System.out.println("4. Display All Students");
+            System.out.println("5. Exit");
+            System.out.print("Enter your choice: ");
+            choice = scanner.nextInt();
+
+            switch (choice) {
+                case 1:
+                    insertStudent(scanner);
+                    break;
+                case 2:
+                    updateStudent(scanner);
+                    break;
+                case 3:
+                    deleteStudent(scanner);
+                    break;
+                case 4:
+                    displayAllStudents();
+                    break;
+                case 5:
+                    System.out.println("Exiting...");
+                    mongoClient.close();
+                    return;
+                default:
+                    System.out.println("Invalid choice. Please try again.");
+            }
+        }
+    }
+
+    // Method to insert a new student
+    private static void insertStudent(Scanner scanner) {
+        System.out.print("Enter Student ID: ");
+        int studentId = scanner.nextInt();
+        System.out.print("Enter Student Name: ");
+        String name = scanner.next();
+        System.out.print("Enter Student Age: ");
+        int age = scanner.nextInt();
+        System.out.print("Enter Student Course: ");
+        String course = scanner.next();
+
+        Document student = new Document("studentId", studentId)
+                .append("name", name)
+                .append("age", age)
+                .append("course", course);
+
+        studentCollection.insertOne(student);
+        System.out.println("Student inserted successfully.");
+    }
+
+    // Method to update an existing student
+    private static void updateStudent(Scanner scanner) {
+        System.out.print("Enter Student ID to update: ");
+        int studentId = scanner.nextInt();
+
+        System.out.print("Enter new name: ");
+        String newName = scanner.next();
+        System.out.print("Enter new age: ");
+        int newAge = scanner.nextInt();
+        System.out.print("Enter new course: ");
+        String newCourse = scanner.next();
+
+        Bson filter = Filters.eq("studentId", studentId);
+        Document updatedData = new Document("$set", new Document("name", newName)
+                .append("age", newAge)
+                .append("course", newCourse));
+
+        studentCollection.updateOne(filter, updatedData);
+        System.out.println("Student updated successfully.");
+    }
+
+    // Method to delete a student
+    private static void deleteStudent(Scanner scanner) {
+        System.out.print("Enter Student ID to delete: ");
+        int studentId = scanner.nextInt();
+
+        Bson filter = Filters.eq("studentId", studentId);
+        studentCollection.deleteOne(filter);
+        System.out.println("Student deleted successfully.");
+    }
+
+    // Method to display all students
+    private static void displayAllStudents() {
+        System.out.println("\n--- All Students ---");
+        for (Document student : studentCollection.find()) {
+            System.out.println("Student ID: " + student.getInteger("studentId"));
+            System.out.println("Name: " + student.getString("name"));
+            System.out.println("Age: " + student.getInteger("age"));
+            System.out.println("Course: " + student.getString("course"));
+            System.out.println("-----------------------------");
+        }
+    }
+}

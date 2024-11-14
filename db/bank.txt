@@ -1,0 +1,109 @@
+CREATE TABLE Account (
+    Acc_no NUMBER PRIMARY KEY,
+    branch_name VARCHAR2(50) NOT NULL,
+    balance NUMBER CHECK (balance >= 0),
+    CONSTRAINT fk_branch_account FOREIGN KEY (branch_name) REFERENCES branch(branch_name)
+);
+
+CREATE TABLE Branch (
+    branch_name VARCHAR2(50) PRIMARY KEY,
+    branch_city VARCHAR2(50) NOT NULL,
+    assets NUMBER CHECK (assets >= 0)
+);
+
+CREATE TABLE Customer (
+    cust_name VARCHAR2(50),
+    cust_street VARCHAR2(100),
+    cust_city VARCHAR2(50),
+    PRIMARY KEY (cust_name)
+);
+
+CREATE TABLE Depositor (
+    cust_name VARCHAR2(50),
+    acc_no NUMBER,
+    PRIMARY KEY (cust_name, acc_no),
+    CONSTRAINT fk_customer_depositor FOREIGN KEY (cust_name) REFERENCES Customer(cust_name),
+    CONSTRAINT fk_account_depositor FOREIGN KEY (acc_no) REFERENCES Account(acc_no)
+);
+
+CREATE TABLE Loan (
+    loan_no NUMBER PRIMARY KEY,
+    branch_name VARCHAR2(50) NOT NULL,
+    amount NUMBER CHECK (amount > 0),
+    CONSTRAINT fk_branch_loan FOREIGN KEY (branch_name) REFERENCES Branch(branch_name)
+);
+
+CREATE TABLE Borrower (
+    cust_name VARCHAR2(50),
+    loan_no NUMBER,
+    PRIMARY KEY (cust_name, loan_no),
+    CONSTRAINT fk_customer_borrower FOREIGN KEY (cust_name) REFERENCES Customer(cust_name),
+    CONSTRAINT fk_loan_borrower FOREIGN KEY (loan_no) REFERENCES Loan(loan_no)
+);
+
+
+SELECT DISTINCT branch_name FROM Loan;
+
+SELECT loan_no FROM Loan
+WHERE branch_name = 'Shivaji Nagar' AND amount > 12000;
+
+
+SELECT Customer.cust_name, Loan.loan_no, Loan.amount
+FROM Customer
+JOIN Borrower ON Customer.cust_name = Borrower.cust_name
+JOIN Loan ON Borrower.loan_no = Loan.loan_no;
+
+SELECT Customer.cust_name
+FROM Customer
+JOIN Borrower ON Customer.cust_name = Borrower.cust_name
+JOIN Loan ON Borrower.loan_no = Loan.loan_no
+WHERE Loan.branch_name = 'Akurdi'
+ORDER BY Customer.cust_name;
+
+
+SELECT cust_name FROM Depositor
+UNION
+SELECT cust_name FROM Borrower;
+
+SELECT Depositor.cust_name
+FROM Depositor
+JOIN Borrower ON Depositor.cust_name = Borrower.cust_name;
+
+SELECT cust_name FROM Depositor
+WHERE cust_name NOT IN (SELECT cust_name FROM Borrower);
+
+
+SELECT AVG(balance) AS avg_balance
+FROM Account
+WHERE branch_name = 'Akurdi';
+
+
+SELECT branch_name
+FROM Account
+GROUP BY branch_name
+HAVING AVG(balance) > 12000;
+
+
+SELECT COUNT(*) AS tuple_count FROM Customer;
+
+SELECT SUM(amount) AS total_loan_amount FROM Loan;
+
+
+DELETE FROM Loan
+WHERE amount BETWEEN 1300 AND 1500;
+
+DELETE FROM Branch WHERE branch_city = 'Nigdi';
+
+CREATE SEQUENCE roll_seq
+START WITH 1
+INCREMENT BY 1;
+
+-- Example: Inserting into Student table with roll_seq
+INSERT INTO Student (Roll, Name, Attendance, Status)
+VALUES (roll_seq.NEXTVAL, 'John Doe', 85, 'Not Detained');
+
+
+
+
+
+

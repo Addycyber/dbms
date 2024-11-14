@@ -1,0 +1,31 @@
+CREATE TABLE Emp (
+    Emp_no NUMBER PRIMARY KEY,
+    Emp_name VARCHAR2(50),
+    Emp_salary NUMBER CHECK (Emp_salary >= 0)
+);
+
+CREATE TABLE Tracking (
+    Emp_no NUMBER,
+    Emp_salary NUMBER,
+    CONSTRAINT fk_emp_tracking FOREIGN KEY (Emp_no) REFERENCES Emp(Emp_no)
+);
+
+CREATE OR REPLACE TRIGGER trg_check_salary
+AFTER INSERT OR UPDATE OF Emp_salary ON Emp
+FOR EACH ROW
+WHEN (NEW.Emp_salary < 50000)
+BEGIN
+    -- Insert the new or updated values into the Tracking table
+    INSERT INTO Tracking (Emp_no, Emp_salary)
+    VALUES (:NEW.Emp_no, :NEW.Emp_salary);
+
+    -- Output a message to notify that the trigger has been initiated
+    DBMS_OUTPUT.PUT_LINE('Trigger initiated: Salary below Rs. 50,000');
+END;
+/
+
+-- Insert example that should activate the trigger
+INSERT INTO Emp (Emp_no, Emp_name, Emp_salary) VALUES (101, 'John Doe', 45000);
+
+-- Update example that should activate the trigger
+UPDATE Emp SET Emp_salary = 40000 WHERE Emp_no = 101;

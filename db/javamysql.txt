@@ -1,0 +1,141 @@
+CREATE TABLE Books (
+    BookID INT AUTO_INCREMENT PRIMARY KEY,
+    Title VARCHAR(100) NOT NULL,
+    Author VARCHAR(100),
+    Price DECIMAL(10, 2),
+    PublishedYear INT
+);
+
+import java.sql.*;
+import java.util.Scanner;
+
+public class BookManager {
+
+    // Database connection details
+    static final String DB_URL = "jdbc:mysql://localhost:3306/your_database_name";
+    static final String USER = "your_username";
+    static final String PASS = "your_password";
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        int choice;
+
+        try (Connection conn = DriverManager.getConnection(DB_URL, USER, PASS)) {
+            System.out.println("Connected to database successfully.");
+
+            while (true) {
+                System.out.println("\n--- Book Management ---");
+                System.out.println("1. Insert Book");
+                System.out.println("2. Update Book");
+                System.out.println("3. Delete Book");
+                System.out.println("4. Display All Books");
+                System.out.println("5. Exit");
+                System.out.print("Enter your choice: ");
+                choice = scanner.nextInt();
+
+                switch (choice) {
+                    case 1:
+                        insertBook(conn, scanner);
+                        break;
+                    case 2:
+                        updateBook(conn, scanner);
+                        break;
+                    case 3:
+                        deleteBook(conn, scanner);
+                        break;
+                    case 4:
+                        displayAllBooks(conn);
+                        break;
+                    case 5:
+                        System.out.println("Exiting...");
+                        return;
+                    default:
+                        System.out.println("Invalid choice. Please try again.");
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // Method to insert a new book
+    private static void insertBook(Connection conn, Scanner scanner) throws SQLException {
+        System.out.print("Enter title: ");
+        String title = scanner.next();
+        System.out.print("Enter author: ");
+        String author = scanner.next();
+        System.out.print("Enter price: ");
+        double price = scanner.nextDouble();
+        System.out.print("Enter published year: ");
+        int year = scanner.nextInt();
+
+        String sql = "INSERT INTO Books (Title, Author, Price, PublishedYear) VALUES (?, ?, ?, ?)";
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, title);
+            pstmt.setString(2, author);
+            pstmt.setDouble(3, price);
+            pstmt.setInt(4, year);
+            pstmt.executeUpdate();
+            System.out.println("Book inserted successfully.");
+        }
+    }
+
+    // Method to update an existing book
+    private static void updateBook(Connection conn, Scanner scanner) throws SQLException {
+        System.out.print("Enter Book ID to update: ");
+        int bookId = scanner.nextInt();
+        System.out.print("Enter new title: ");
+        String title = scanner.next();
+        System.out.print("Enter new author: ");
+        String author = scanner.next();
+        System.out.print("Enter new price: ");
+        double price = scanner.nextDouble();
+        System.out.print("Enter new published year: ");
+        int year = scanner.nextInt();
+
+        String sql = "UPDATE Books SET Title = ?, Author = ?, Price = ?, PublishedYear = ? WHERE BookID = ?";
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, title);
+            pstmt.setString(2, author);
+            pstmt.setDouble(3, price);
+            pstmt.setInt(4, year);
+            pstmt.setInt(5, bookId);
+            int rowsAffected = pstmt.executeUpdate();
+            if (rowsAffected > 0) {
+                System.out.println("Book updated successfully.");
+            } else {
+                System.out.println("Book ID not found.");
+            }
+        }
+    }
+
+    // Method to delete a book
+    private static void deleteBook(Connection conn, Scanner scanner) throws SQLException {
+        System.out.print("Enter Book ID to delete: ");
+        int bookId = scanner.nextInt();
+
+        String sql = "DELETE FROM Books WHERE BookID = ?";
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, bookId);
+            int rowsAffected = pstmt.executeUpdate();
+            if (rowsAffected > 0) {
+                System.out.println("Book deleted successfully.");
+            } else {
+                System.out.println("Book ID not found.");
+            }
+        }
+    }
+
+    // Method to display all books
+    private static void displayAllBooks(Connection conn) throws SQLException {
+        String sql = "SELECT * FROM Books";
+        try (Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+            System.out.println("\n--- Book List ---");
+            while (rs.next()) {
+                System.out.println("Book ID: " + rs.getInt("BookID"));
+                System.out.println("Title: " + rs.getString("Title"));
+                System.out.println("Author: " + rs.getString("Author"));
+                System.out.println("Price: " + rs.getDouble("Price"));
+                System.out.println("Published Year: " + rs.getInt("PublishedYear"));
+                System.out.println

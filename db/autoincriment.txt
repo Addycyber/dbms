@@ -1,0 +1,92 @@
+CREATE TABLE OWNERS (
+    OwnerNo INT AUTO_INCREMENT PRIMARY KEY,
+    OwnerName VARCHAR(100) NOT NULL,
+    Phno VARCHAR(15)
+);
+
+CREATE TABLE PROPERTIES (
+    Pno INT AUTO_INCREMENT PRIMARY KEY,
+    Type VARCHAR(20) NOT NULL,
+    Sq_Ft_Area INT CHECK (Sq_Ft_Area > 0),
+    Rent DECIMAL(10, 2) CHECK (Rent > 0),
+    Address VARCHAR(200),
+    Status VARCHAR(10) CHECK (Status IN ('Rented', 'Not Rented')),
+    OwnerNo INT,
+    CONSTRAINT fk_owner FOREIGN KEY (OwnerNo) REFERENCES OWNERS (OwnerNo)
+);
+
+
+-- Insert data into OWNERS table
+INSERT INTO OWNERS (OwnerName, Phno) VALUES ('Ramesh', '9876543210');
+INSERT INTO OWNERS (OwnerName, Phno) VALUES ('Gopal', '9876543211');
+INSERT INTO OWNERS (OwnerName, Phno) VALUES ('Suresh', '9876543212');
+INSERT INTO OWNERS (OwnerName, Phno) VALUES ('Meena', '9876543213');
+
+-- Insert data into PROPERTIES table
+INSERT INTO PROPERTIES (Type, Sq_Ft_Area, Rent, Address, Status, OwnerNo) VALUES 
+('1BHK', 500, 12000, 'Kothrud, Pune', 'Not Rented', 2),
+('2BHK', 800, 20000, 'Baner, Pune', 'Rented', 1),
+('1BHK', 600, 15000, 'Kothrud, Pune', 'Not Rented', 3),
+('3BHK', 1200, 25000, 'Aundh, Pune', 'Rented', 2),
+('1BHK', 550, 14000, 'Kothrud, Pune', 'Rented', 4),
+('2BHK', 850, 18000, 'Shivaji Nagar, Pune', 'Not Rented', 3),
+('Studio', 350, 10000, 'Kothrud, Pune', 'Not Rented', 1);
+
+SELECT * 
+FROM PROPERTIES
+WHERE Type = '1BHK' 
+  AND Address LIKE '%Kothrud%' 
+  AND Status = 'Not Rented';
+
+
+SELECT p.* 
+FROM PROPERTIES p
+JOIN OWNERS o ON p.OwnerNo = o.OwnerNo
+WHERE o.OwnerName = 'Gopal';
+
+SELECT OwnerNo, MIN(Sq_Ft_Area) AS Smallest_Property_SqFt
+FROM PROPERTIES
+GROUP BY OwnerNo;
+
+SELECT * 
+FROM PROPERTIES
+WHERE Address LIKE '%Kothrud%'
+ORDER BY Rent DESC;
+
+CREATE VIEW OwnerPropertiesView AS
+SELECT o.OwnerName, p.Pno, p.Type, p.Address, p.Rent
+FROM OWNERS o
+JOIN PROPERTIES p ON o.OwnerNo = p.OwnerNo;
+
+SELECT OwnerName 
+FROM OWNERS
+WHERE OwnerName LIKE '%ee%';
+
+SELECT Pno, Type, Address, Rent, Status
+FROM PROPERTIES
+WHERE Rent > 15000 AND Rent < 22000;
+
+SELECT DISTINCT Type 
+FROM PROPERTIES;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
